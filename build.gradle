@@ -1,0 +1,57 @@
+buildscript {
+    ext {
+        springBootVersion = '1.2.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot' 
+
+jar {
+    baseName = 'issue-manager'
+    version = '0.0.1-SNAPSHOT'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url 'http://repo.spring.io/snapshot' }
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.social:spring-social-github:1.0.0.BUILD-SNAPSHOT")
+    testCompile("org.springframework.boot:spring-boot-starter-test") 
+}
+
+eclipse {
+    classpath {
+         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
+
+task getMavenMetadata {
+	def file = new File('maven-metadata.xml')
+	if (!file.exists()) {
+		def url = new URL('http://repo.spring.io/snapshot/org/springframework/social/spring-social-github/1.0.0.BUILD-SNAPSHOT/maven-metadata.xml')
+		url.withInputStream{ 
+			i -> file.withOutputStream{ it << i }
+		}
+	}
+}
